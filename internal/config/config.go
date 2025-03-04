@@ -10,6 +10,8 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/postgres"
+	"github.com/DATA-DOG/go-sqlmock"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"feature-flag-service/internal/models"
 )
@@ -35,8 +37,19 @@ func ConnectDB() {
 
 	// Check if running tests
 	if os.Getenv("TEST_MODE") == "true" {
-		fmt.Println("🛠️ Running in TEST mode: Connecting to test database")
-		dsn = "postgres://postgres:password@test-postgres:5432/test_feature_flags?sslmode=disable"
+		mockDB, mockInstance, err := sqlmock.New()
+		if err != nil {
+			log.Fatalf("❌ Failed to create SQL mock: %v", err)
+		}
+		mock = mockInstance
+
+		// Use SQLite for in-memory testing (GORM needs a valid driver)
+		DB, err = gorm.Open(sqlite.Dialector{DSN: "file::memory:?cache=shared"}, &gorm.Config{})
+		if err != nil {
+			log.Fatalf("❌ Failed to connect to mock database: %v", err)
+		}
+		fmt.Println("✅ Mock database connected")
+		return
 	} else {
 		dsn = os.Getenv("DATABASE_URL")
 	}
