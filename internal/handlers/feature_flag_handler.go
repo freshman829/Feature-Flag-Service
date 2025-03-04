@@ -9,6 +9,16 @@ import (
 )
 
 // CreateFeatureFlag handles creating a new feature flag
+// @Summary Create a new feature flag
+// @Description Adds a new feature flag to the system
+// @Tags Feature Flags
+// @Accept json
+// @Produce json
+// @Param featureFlag body models.FeatureFlag true "Feature flag details"
+// @Success 201 {object} models.FeatureFlag
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/flags [post]
 func CreateFeatureFlag(c *gin.Context) {
 	var featureFlag models.FeatureFlag
 
@@ -26,6 +36,13 @@ func CreateFeatureFlag(c *gin.Context) {
 }
 
 // GetFeatureFlags retrieves all feature flags
+// @Summary Get all feature flags
+// @Description Retrieves all feature flags from the system
+// @Tags Feature Flags
+// @Produce json
+// @Success 200 {array} models.FeatureFlag
+// @Failure 500 {object} map[string]string
+// @Router /api/flags [get]
 func GetFeatureFlags(c *gin.Context) {
 	var featureFlags []models.FeatureFlag
 
@@ -38,6 +55,14 @@ func GetFeatureFlags(c *gin.Context) {
 }
 
 // GetFeatureFlag retrieves a specific feature flag by ID
+// @Summary Get a feature flag by ID
+// @Description Retrieves details of a specific feature flag
+// @Tags Feature Flags
+// @Produce json
+// @Param id path int true "Feature flag ID"
+// @Success 200 {object} models.FeatureFlag
+// @Failure 404 {object} map[string]string
+// @Router /api/flags/{id} [get]
 func GetFeatureFlag(c *gin.Context) {
 	var featureFlag models.FeatureFlag
 
@@ -51,6 +76,17 @@ func GetFeatureFlag(c *gin.Context) {
 }
 
 // UpdateFeatureFlag updates an existing feature flag
+// @Summary Update a feature flag
+// @Description Updates the details of an existing feature flag
+// @Tags Feature Flags
+// @Accept json
+// @Produce json
+// @Param id path int true "Feature flag ID"
+// @Param featureFlag body models.FeatureFlag true "Updated feature flag details"
+// @Success 200 {object} models.FeatureFlag
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /api/flags/{id} [put]
 func UpdateFeatureFlag(c *gin.Context) {
 	var featureFlag models.FeatureFlag
 	id := c.Param("id")
@@ -70,6 +106,13 @@ func UpdateFeatureFlag(c *gin.Context) {
 }
 
 // DeleteFeatureFlag deletes a feature flag
+// @Summary Delete a feature flag
+// @Description Deletes a feature flag from the system
+// @Tags Feature Flags
+// @Param id path int true "Feature flag ID"
+// @Success 200 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/flags/{id} [delete]
 func DeleteFeatureFlag(c *gin.Context) {
 	id := c.Param("id")
 

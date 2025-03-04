@@ -10,6 +10,16 @@ import (
 )
 
 // Register handles user registration
+// @Summary Register a new user
+// @Description Creates a new user account
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param user body models.User true "User registration details"
+// @Success 201 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 409 {object} map[string]string
+// @Router /register [post]
 func Register(c *gin.Context) {
 	var input struct {
 		Username string `json:"username"`
@@ -48,6 +58,16 @@ func Register(c *gin.Context) {
 }
 
 // Login handles user authentication
+// @Summary User login
+// @Description Authenticates a user and returns a JWT token
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param credentials body map[string]string true "User credentials"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Router /login [post]
 func Login(c *gin.Context) {
 	var input struct {
 		Username string `json:"username"`

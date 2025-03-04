@@ -6,13 +6,22 @@ import (
 	"net/http"
 	"os"
 
+	"feature-flag-service/docs"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"feature-flag-service/internal/config"
 	"feature-flag-service/internal/handlers"
 	"feature-flag-service/internal/middleware"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title Feature Flag Service API
+// @version 1.0
+// @description API for managing feature flags
+// @host localhost:8000
+// @BasePath /
 func main() {
 	// Load environment variables
 	if err := godotenv.Load(); err != nil {
@@ -24,6 +33,9 @@ func main() {
 
 	// Create a new Gin router
 	r := gin.Default()
+
+	// Swagger endpoint
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Public routes
 	r.POST("/register", handlers.Register)
