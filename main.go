@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 
-	"feature-flag-service/docs"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"feature-flag-service/internal/config"
