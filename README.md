@@ -13,6 +13,12 @@ A lightweight and efficient **Feature Flag Service** built with **Golang, Gin, P
 
 ---
 
+## 🌍 Live Preview
+- **API Base URL:** [https://feature-flag-service-production.up.railway.app/api](https://feature-flag-service-production.up.railway.app/api)
+- **Swagger Documentation:** [https://feature-flag-service-production.up.railway.app/swagger/index.html](https://feature-flag-service-production.up.railway.app/swagger/index.html)
+
+---
+
 ## 📂 Project Structure
 ```
 feature-flag-service/
@@ -129,3 +135,4 @@ This project is **MIT Licensed**. See `LICENSE` for details.
 - **Swagger** for API Documentation
 - **PostgreSQL & Redis** for database management
 - **Railway & Docker** for seamless deployment
+
