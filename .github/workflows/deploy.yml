@@ -39,5 +39,4 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           curl -fsSL https://railway.app/install.sh | sh
-          railway auth --token $RAILWAY_TOKEN
           railway up --service feature-flag-service
