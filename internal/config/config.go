@@ -9,6 +9,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"feature-flag-service/internal/models"
 )
 
 // Global variables for DB and Redis
@@ -17,6 +18,14 @@ var (
 	RDB *redis.Client
 	Ctx = context.Background()
 )
+// RunMigrations applies database migration
+func RunMigrations() {
+	err := DB.AutoMigrate(&models.FeatureFlag{})
+	if err != nil {
+		log.Fatalf("❌ Failed to run migrations: %v", err)
+	}
+	fmt.Println("✅ Database migrations applied successfully")
+}
 
 // ConnectDB initializes PostgreSQL connection
 func ConnectDB() {
@@ -52,4 +61,5 @@ func ConnectRedis() {
 func Init() {
 	ConnectDB()
 	ConnectRedis()
+	RunMigrations()
 }
