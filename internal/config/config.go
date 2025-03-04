@@ -20,7 +20,7 @@ var (
 )
 // RunMigrations applies database migration
 func RunMigrations() {
-	err := DB.AutoMigrate(&models.FeatureFlag{})
+	err := DB.AutoMigrate(&models.FeatureFlag{}, &models.User{})
 	if err != nil {
 		log.Fatalf("❌ Failed to run migrations: %v", err)
 	}

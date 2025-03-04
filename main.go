@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 	"feature-flag-service/internal/config"
 	"feature-flag-service/internal/handlers"
+	"feature-flag-service/internal/middleware"
 )
 
 func main() {
@@ -24,12 +25,17 @@ func main() {
 	// Create a new Gin router
 	r := gin.Default()
 
+	// Public routes
+	r.POST("/register", handlers.Register)
+	r.POST("/login", handlers.Login)
+
 	// Health check endpoint
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
 
 	api := r.Group("/api")
+	api.Use(middleware.AuthMiddleware())
 	{
 		api.POST("/flags", handlers.CreateFeatureFlag)
 		api.GET("/flags", handlers.GetFeatureFlags)
