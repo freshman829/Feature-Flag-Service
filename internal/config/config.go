@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"net/url"
+	"strings"
 
 	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/postgres"
@@ -51,11 +53,32 @@ func ConnectDB() {
 
 // ConnectRedis initializes Redis connection
 func ConnectRedis() {
-	RDB = redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("REDIS_URL"),
-		Password: "", // No password for now
-		DB:       0,
-	})
+	redisURL := os.Getenv("REDIS_URL")
+
+	// Parse REDIS_URL if it contains authentication
+	if strings.HasPrefix(redisURL, "redis://") {
+		parsedURL, err := url.Parse(redisURL)
+		if err != nil {
+			log.Fatalf("❌ Invalid REDIS_URL format: %v", err)
+		}
+
+		// Extract Redis credentials
+		redisAddr := parsedURL.Host
+		redisPassword, _ := parsedURL.User.Password()
+
+		RDB = redis.NewClient(&redis.Options{
+			Addr:     redisAddr,     // Host:Port
+			Password: redisPassword, // Extracted password
+			DB:       0,
+		})
+	} else {
+		// Fallback if REDIS_URL is incorrectly formatted
+		RDB = redis.NewClient(&redis.Options{
+			Addr:     redisURL,
+			Password: os.Getenv("REDIS_PASSWORD"), // Fallback password
+			DB:       0,
+		})
+	}
 
 	// Test Redis connection
 	_, err := RDB.Ping(Ctx).Result()

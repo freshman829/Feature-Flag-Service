@@ -26,3 +26,4 @@ vendor/
 # Ignore logs and debugging files
 *.log
 debug/
+go1.21.4.linux-amd64.tar.gz

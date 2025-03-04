@@ -13,6 +13,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
   test-postgres:
     image: postgres:15
     container_name: feature_flag_test_postgres
@@ -34,7 +35,6 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_data:/data
-
   app:
     build: .
     container_name: feature_flag_app
@@ -42,11 +42,12 @@ services:
     depends_on:
       - postgres
       - redis
+      - test-postgres
     environment:
       PORT: 8080
-      DATABASE_URL: postgres://postgres:password@postgres:5432/feature_flags?sslmode=disable
-      REDIS_URL: redis:6379
-      JWT_SECRET: mysecretkey
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      JWT_SECRET: ${JWT_SECRET}
     ports:
       - "8080:8080"
 
