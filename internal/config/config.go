@@ -29,9 +29,17 @@ func RunMigrations() {
 
 // ConnectDB initializes PostgreSQL connection
 func ConnectDB() {
-	dsn := os.Getenv("DATABASE_URL")
-	var err error
+	var dsn string
 
+	// Check if running tests
+	if os.Getenv("TEST_MODE") == "true" {
+		fmt.Println("🛠️ Running in TEST mode: Connecting to test database")
+		dsn = "postgres://postgres:password@test-postgres:5432/test_feature_flags?sslmode=disable"
+	} else {
+		dsn = os.Getenv("DATABASE_URL")
+	}
+
+	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("❌ Could not connect to PostgreSQL: %v", err)
@@ -39,6 +47,7 @@ func ConnectDB() {
 
 	fmt.Println("✅ Connected to PostgreSQL")
 }
+
 
 // ConnectRedis initializes Redis connection
 func ConnectRedis() {

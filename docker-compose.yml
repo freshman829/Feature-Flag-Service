@@ -13,7 +13,18 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+  test-postgres:
+    image: postgres:15
+    container_name: feature_flag_test_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: test_feature_flags
+    ports:
+      - "5433:5432"  # Run test database on a different port
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
   redis:
     image: redis:latest
     container_name: feature_flag_redis
@@ -41,4 +52,5 @@ services:
 
 volumes:
   postgres_data:
+  postgres_test_data:
   redis_data:
