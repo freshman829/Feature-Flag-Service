@@ -7,21 +7,24 @@ import (
 	"os"
 	"net/url"
 	"strings"
+	"database/sql"
 
 	"github.com/go-redis/redis/v8"
-	"gorm.io/driver/postgres"
 	"github.com/DATA-DOG/go-sqlmock"
-	"gorm.io/driver/sqlite"
+	"gorm.io/gorm/logger"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"feature-flag-service/internal/models"
 )
 
 // Global variables for DB and Redis
 var (
-	DB  *gorm.DB
-	RDB *redis.Client
-	Ctx = context.Background()
+	DB   *gorm.DB
+	RDB  *redis.Client
+	Ctx  = context.Background()
+	Mock sqlmock.Sqlmock // Mock variable for testing
 )
+
 // RunMigrations applies database migration
 func RunMigrations() {
 	err := DB.AutoMigrate(&models.FeatureFlag{}, &models.User{})
@@ -33,27 +36,33 @@ func RunMigrations() {
 
 // ConnectDB initializes PostgreSQL connection
 func ConnectDB() {
-	var dsn string
-
-	// Check if running tests
 	if os.Getenv("TEST_MODE") == "true" {
-		mockDB, mockInstance, err := sqlmock.New()
+		fmt.Println("🛠️ Running in TEST mode with a mock database")
+
+		var err error
+		var mockDB *sql.DB
+		mockDB, Mock, err = sqlmock.New()
 		if err != nil {
 			log.Fatalf("❌ Failed to create SQL mock: %v", err)
 		}
-		mock = mockInstance
 
-		// Use SQLite for in-memory testing (GORM needs a valid driver)
-		DB, err = gorm.Open(sqlite.Dialector{DSN: "file::memory:?cache=shared"}, &gorm.Config{})
+		DB, err = gorm.Open(postgres.New(postgres.Config{
+			Conn:                 mockDB,
+			PreferSimpleProtocol: true, // Disable prepared statements for simplicity
+		}), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Silent),
+			SkipDefaultTransaction: true, // 🚀 Fix: Disable transactions in test mode
+		})
 		if err != nil {
 			log.Fatalf("❌ Failed to connect to mock database: %v", err)
 		}
+
 		fmt.Println("✅ Mock database connected")
 		return
-	} else {
-		dsn = os.Getenv("DATABASE_URL")
 	}
 
+	// Production/PostgreSQL setup
+	dsn := os.Getenv("DATABASE_URL")
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -62,7 +71,6 @@ func ConnectDB() {
 
 	fmt.Println("✅ Connected to PostgreSQL")
 }
-
 
 // ConnectRedis initializes Redis connection
 func ConnectRedis() {
@@ -106,5 +114,7 @@ func ConnectRedis() {
 func Init() {
 	ConnectDB()
 	ConnectRedis()
-	RunMigrations()
+	if os.Getenv("TEST_MODE") != "true" {
+		RunMigrations()
+	}
 }
