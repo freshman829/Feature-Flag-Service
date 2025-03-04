@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"feature-flag-service/internal/config"
+	"feature-flag-service/internal/handlers"
 )
 
 func main() {
@@ -27,6 +28,15 @@ func main() {
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
+
+	api := r.Group("/api")
+	{
+		api.POST("/flags", handlers.CreateFeatureFlag)
+		api.GET("/flags", handlers.GetFeatureFlags)
+		api.GET("/flags/:id", handlers.GetFeatureFlag)
+		api.PUT("/flags/:id", handlers.UpdateFeatureFlag)
+		api.DELETE("/flags/:id", handlers.DeleteFeatureFlag)
+	}
 
 	// Get port from environment
 	port := os.Getenv("PORT")
