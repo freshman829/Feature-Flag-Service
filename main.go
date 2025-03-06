@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	_ "feature-flag-service/docs"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -20,7 +21,11 @@ import (
 // @title Feature Flag Service API
 // @version 1.0
 // @description API for managing feature flags
-// @host localhost:8000
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Enter your token with "Bearer " prefix: Bearer <your_token>
+// @host localhost:8080
 // @BasePath /
 func main() {
 	// Load environment variables
@@ -34,6 +39,13 @@ func main() {
 	// Create a new Gin router
 	r := gin.Default()
 
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"}, // Allow all origins (Change this to specific domains in production)
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 	// Swagger endpoint
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

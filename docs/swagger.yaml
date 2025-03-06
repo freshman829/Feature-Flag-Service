@@ -1,5 +1,35 @@
-basePath: /
 definitions:
+  handlers.FeatureFlagRequest:
+    properties:
+      description:
+        type: string
+      is_enabled:
+        type: boolean
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  handlers.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  handlers.RegisterRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
   models.FeatureFlag:
     properties:
       created_at:
@@ -15,18 +45,6 @@ definitions:
       updated_at:
         type: string
     type: object
-  models.User:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: integer
-      updated_at:
-        type: string
-      username:
-        type: string
-    type: object
-host: localhost:8000
 info:
   contact: {}
   description: API for managing feature flags
@@ -51,6 +69,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Get all feature flags
       tags:
       - Feature Flags
@@ -64,7 +84,7 @@ paths:
         name: featureFlag
         required: true
         schema:
-          $ref: '#/definitions/models.FeatureFlag'
+          $ref: '#/definitions/handlers.FeatureFlagRequest'
       produces:
       - application/json
       responses:
@@ -84,6 +104,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Create a new feature flag
       tags:
       - Feature Flags
@@ -109,6 +131,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Delete a feature flag
       tags:
       - Feature Flags
@@ -133,6 +157,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Get a feature flag by ID
       tags:
       - Feature Flags
@@ -171,6 +197,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - BearerAuth: []
       summary: Update a feature flag
       tags:
       - Feature Flags
@@ -185,9 +213,7 @@ paths:
         name: credentials
         required: true
         schema:
-          additionalProperties:
-            type: string
-          type: object
+          $ref: '#/definitions/handlers.LoginRequest'
       produces:
       - application/json
       responses:
@@ -223,7 +249,7 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/handlers.RegisterRequest'
       produces:
       - application/json
       responses:
@@ -248,4 +274,10 @@ paths:
       summary: Register a new user
       tags:
       - Authentication
+securityDefinitions:
+  BearerAuth:
+    description: 'Enter your token with "Bearer " prefix: Bearer <your_token>'
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

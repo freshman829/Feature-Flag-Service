@@ -9,13 +9,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// RegisterRequest represents the expected body for user registration
+type RegisterRequest struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
 // Register handles user registration
 // @Summary Register a new user
 // @Description Creates a new user account
 // @Tags Authentication
 // @Accept json
 // @Produce json
-// @Param user body models.User true "User registration details"
+// @Param user body RegisterRequest true "User registration details"
 // @Success 201 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 409 {object} map[string]string
@@ -57,13 +63,19 @@ func Register(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
 }
 
+// LoginRequest represents the expected body for user login
+type LoginRequest struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
 // Login handles user authentication
 // @Summary User login
 // @Description Authenticates a user and returns a JWT token
 // @Tags Authentication
 // @Accept json
 // @Produce json
-// @Param credentials body map[string]string true "User credentials"
+// @Param credentials body LoginRequest true "User credentials"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 401 {object} map[string]string

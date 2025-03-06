@@ -8,13 +8,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// FeatureFlagRequest represents the expected body for creating a feature flag
+type FeatureFlagRequest struct {
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description"`
+	IsEnabled   bool   `json:"is_enabled"`
+}
+
 // CreateFeatureFlag handles creating a new feature flag
 // @Summary Create a new feature flag
 // @Description Adds a new feature flag to the system
 // @Tags Feature Flags
 // @Accept json
 // @Produce json
-// @Param featureFlag body models.FeatureFlag true "Feature flag details"
+// @Security BearerAuth
+// @Param featureFlag body FeatureFlagRequest true "Feature flag details"
 // @Success 201 {object} models.FeatureFlag
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
@@ -40,6 +48,7 @@ func CreateFeatureFlag(c *gin.Context) {
 // @Description Retrieves all feature flags from the system
 // @Tags Feature Flags
 // @Produce json
+// @Security BearerAuth
 // @Success 200 {array} models.FeatureFlag
 // @Failure 500 {object} map[string]string
 // @Router /api/flags [get]
@@ -59,6 +68,7 @@ func GetFeatureFlags(c *gin.Context) {
 // @Description Retrieves details of a specific feature flag
 // @Tags Feature Flags
 // @Produce json
+// @Security BearerAuth
 // @Param id path int true "Feature flag ID"
 // @Success 200 {object} models.FeatureFlag
 // @Failure 404 {object} map[string]string
@@ -81,6 +91,7 @@ func GetFeatureFlag(c *gin.Context) {
 // @Tags Feature Flags
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param id path int true "Feature flag ID"
 // @Param featureFlag body models.FeatureFlag true "Updated feature flag details"
 // @Success 200 {object} models.FeatureFlag
@@ -109,6 +120,7 @@ func UpdateFeatureFlag(c *gin.Context) {
 // @Summary Delete a feature flag
 // @Description Deletes a feature flag from the system
 // @Tags Feature Flags
+// @Security BearerAuth
 // @Param id path int true "Feature flag ID"
 // @Success 200 {object} map[string]string
 // @Failure 500 {object} map[string]string
